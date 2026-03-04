@@ -1,4 +1,4 @@
-# 35-db-migration-drills
+# 35-aws-automation-blueprint
 
 A production-minded Database Reliability Engineering toolkit: HA lab, backup/PITR drills, and zero-downtime migration playbooks.
 
