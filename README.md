@@ -1,37 +1,73 @@
 # 35-aws-reliability-security-mysql
 
-A production-minded Database Reliability Engineering toolkit: HA lab, backup/PITR drills, and zero-downtime migration playbooks.
+A portfolio-grade, runnable reliability + security toolkit for **MySQL operations**:
+replication health checks, safe backup/restore drills, and deterministic validation.
 
-Focus: mysql
+This repository is intentionally generic (no employer branding). It focuses on working automation, not claims.
 
+## The 3 core problems this repo solves
+1) **Recovery you can trust:** backup + restore drills that are verifiable and safe to rerun.
+2) **Replication confidence:** repeatable checks for replica health and “is it actually syncing?”.
+3) **Production-safe validation:** explicit test modes that separate offline checks from integration tests.
 
-## Why this repo exists
-This is a portfolio-grade, runnable toolkit that demonstrates how I approach database reliability work:
-safe changes, predictable operations, and recovery you can actually trust.
-
-## The top pains this repo addresses
-1) Keeping production stable while the system scales—reducing incident frequency, improving MTTR, and building predictable operations (SLOs/runbooks/on-call hygiene).
-2) Replacing manual, risky changes with automated delivery—repeatable infrastructure, safe deployments, and drift-free environments (IaC + CI/CD + GitOps).
-3) Making databases boring again—high availability, predictable performance, safe backups, and zero/low-downtime migrations with solid tooling and runbooks.
-
-## Quick demo (local)
+## Quickstart (local lab)
 Prereqs: Docker + Docker Compose.
 
 ```bash
 make demo
 ```
 
-What you get:
-- a Postgres primary + replica setup
-- PgBouncer for connection pooling
-- scripts to verify replication and run backup/restore drills
+You get:
+- MySQL primary + replica (replication configured)
+- scripts to seed data, verify replication, and run backup/restore drills
 
-## Design decisions (high level)
-- Prefer drills and runbooks over “tribal knowledge”.
-- Keep the lab small but realistic (replication + pooling + backup).
-- Make failure modes explicit and testable.
+## Tests (two explicit modes)
 
-## What I would do next in production
-- Add PITR with WAL archiving + periodic restore tests.
-- Add SLOs (p95 query latency, replication lag) and alert thresholds.
-- Add automated migration checks (preflight, locks, backout plan).
+This repo supports exactly two test modes via `TEST_MODE`:
+
+- `TEST_MODE=demo` (default): offline-only, deterministic guardrails (no Docker required)
+- `TEST_MODE=production`: real Docker integrations (guarded by explicit opt-in)
+
+Run demo mode:
+
+```bash
+make test-demo
+```
+
+Run production mode:
+
+```bash
+make test-production
+```
+
+## Guardrails
+
+The file `tools/mysql_guardrails.py` performs offline checks to ensure the repo stays honest:
+- docker-compose defines MySQL services and avoids floating image tags
+- restore drills are isolated (verification DB)
+- README documents `TEST_MODE`
+
+Generate a JSON report:
+
+```bash
+python3 tools/mysql_guardrails.py --format json --out artifacts/mysql_guardrails.json
+```
+
+## Sponsorship and contact
+
+Sponsored by:
+CloudForgeLabs  
+https://cloudforgelabs.ainextstudios.com/  
+support@ainextstudios.com
+
+Built by:
+Freddy D. Alvarez  
+https://www.linkedin.com/in/freddy-daniel-alvarez/
+
+For job opportunities, contact:
+it.freddy.alvarez@gmail.com
+
+## License
+
+Personal, educational, and non-commercial use is free. Commercial use requires paid permission.
+See `LICENSE` and `COMMERCIAL_LICENSE.md`.
